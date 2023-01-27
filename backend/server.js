@@ -7,6 +7,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const rootRouter = require("./routes/root");
 const userRouter = require("./routes/user");
+const noteRouter = require("./routes/note");
 const { logger, logEvents } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 const corsOptions = require("./config/corsOptions");
@@ -31,6 +32,7 @@ app.use(express.static("public"));
 // Routes
 app.use("/", rootRouter);
 app.use("/users", userRouter);
+app.use("/notes", noteRouter);
 
 // catch all route not found
 app.all("*", (req, res, next) => {
