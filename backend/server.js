@@ -2,8 +2,17 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const rootRouter = require("./routes/root");
+const { logger } = require("./middleware/logger");
+const errorHandler = require("./middleware/errorHandler");
 
-app.use("/", express.static(path.join(__dirname, "/public")));
+// custom middleware to log requests
+app.use(logger);
+
+app.use(express.json());
+
+// this are the same. First one is just more explicit
+// app.use("/", express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
 
 // Routes
 app.use("/", rootRouter);
@@ -20,6 +29,9 @@ app.all("*", (req, res, next) => {
     res.type("txt").send("404 Not Found");
   }
 });
+
+// custom middleware errorHandler
+app.use(errorHandler);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}...`));
