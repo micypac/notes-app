@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const rootRouter = require("./routes/root");
+const userRouter = require("./routes/user");
 const { logger, logEvents } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 const corsOptions = require("./config/corsOptions");
@@ -29,6 +30,7 @@ app.use(express.static("public"));
 
 // Routes
 app.use("/", rootRouter);
+app.use("/users", userRouter);
 
 // catch all route not found
 app.all("*", (req, res, next) => {
