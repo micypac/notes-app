@@ -1,16 +1,24 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const rootRouter = require("./routes/root");
 const { logger } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
+const corsOptions = require("./config/corsOptions");
 
 // custom middleware to log requests
 app.use(logger);
 
+// library middlewares
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
-// this are the same. First one is just more explicit
+app.use(cookieParser());
+
+// these are the same. First one is just more explicit
 // app.use("/", express.static(path.join(__dirname, "public")));
 app.use(express.static("public"));
 
@@ -28,6 +36,13 @@ app.all("*", (req, res, next) => {
   } else {
     res.type("txt").send("404 Not Found");
   }
+
+  // throw error manually to test errorHandler
+  // const err = new Error("The requested resource couldn't be found.");
+  // err.title = "Resource Not Found";
+  // err.errors = ["The requested resource couldn't be found."];
+  // err.status = 404;
+  // next(err);
 });
 
 // custom middleware errorHandler
