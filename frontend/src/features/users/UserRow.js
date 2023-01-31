@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUserById } from "./usersApiSlice";
 
-const UserPage = ({ userId }) => {
+const UserRow = ({ userId }) => {
   const user = useSelector((state) => selectUserById(state, userId));
 
   const navigate = useNavigate();
@@ -32,4 +32,4 @@ const UserPage = ({ userId }) => {
   }
 };
 
-export default UserPage;
+export default UserRow;

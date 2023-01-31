@@ -1,5 +1,5 @@
 import { useGetUsersQuery } from "./usersApiSlice";
-import UserPage from "./UserPage";
+import UserRow from "./UserRow";
 
 const UsersList = () => {
   const {
@@ -22,7 +22,7 @@ const UsersList = () => {
     const { ids } = users;
 
     const tableContent = ids?.length
-      ? ids.map((userId) => <UserPage key={userId} userId={userId} />)
+      ? ids.map((userId) => <UserRow key={userId} userId={userId} />)
       : null;
 
     content = (
