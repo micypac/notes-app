@@ -57,7 +57,7 @@ app.all("*", (req, res, next) => {
 // custom middleware errorHandler
 app.use(errorHandler);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3500;
 
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB...");
