@@ -10,7 +10,7 @@ userRouter
   .route("/")
   .get(getAllUsers)
   .post(createNewUser)
-  .put(updateUser)
+  .patch(updateUser)
   .delete(deleteUser);
 
 module.exports = userRouter;
