@@ -11,7 +11,7 @@ noteRouter
   .route("/")
   .get(getAllNotes)
   .post(createNewNote)
-  .put(updateNote)
+  .patch(updateNote)
   .delete(deleteNote);
 
 module.exports = noteRouter;
