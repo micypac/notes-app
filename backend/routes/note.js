@@ -6,6 +6,9 @@ const {
   deleteNote,
   getAllNotes,
 } = require("../controllers/noteController");
+const verifyJWT = require("../middleware/verifyJWT");
+
+noteRouter.use(verifyJWT);
 
 noteRouter
   .route("/")
