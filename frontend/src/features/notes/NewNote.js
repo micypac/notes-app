@@ -5,7 +5,12 @@ import NewNoteForm from "./NewNoteForm";
 const NewNote = () => {
   const users = useSelector(selectAllUsers);
 
-  const content = users ? <NewNoteForm users={users} /> : <p>Loading...</p>;
+  // since users query can only be accessed by logged in user using token
+  if (!users?.length) {
+    return <p>Not Currently Available</p>;
+  }
+
+  const content = <NewNoteForm users={users} />;
 
   return content;
 };
