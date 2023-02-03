@@ -5,6 +5,7 @@ import Login from "./features/auth/Login";
 import DashboardLayout from "./components/DashboardLayout";
 import Welcome from "./features/auth/Welcome";
 import PreFetch from "./features/auth/PreFetch";
+import PersistLogin from "./features/auth/PersistLogin";
 import UsersList from "./features/users/UsersList";
 import NewUserForm from "./features/users/NewUserForm";
 import EditUser from "./features/users/EditUser";
@@ -19,20 +20,22 @@ function App() {
         <Route index element={<Public />} />
         <Route path="login" element={<Login />} />
 
-        <Route element={<PreFetch />}>
-          <Route path="dash" element={<DashboardLayout />}>
-            <Route index element={<Welcome />} />
+        <Route element={<PersistLogin />}>
+          <Route element={<PreFetch />}>
+            <Route path="dash" element={<DashboardLayout />}>
+              <Route index element={<Welcome />} />
 
-            <Route path="notes">
-              <Route index element={<NotesList />} />
-              <Route path=":id" element={<EditNote />} />
-              <Route path="new" element={<NewNote />} />
-            </Route>
+              <Route path="notes">
+                <Route index element={<NotesList />} />
+                <Route path=":id" element={<EditNote />} />
+                <Route path="new" element={<NewNote />} />
+              </Route>
 
-            <Route path="users">
-              <Route index element={<UsersList />} />
-              <Route path=":id" element={<EditUser />} />
-              <Route path="new" element={<NewUserForm />} />
+              <Route path="users">
+                <Route index element={<UsersList />} />
+                <Route path=":id" element={<EditUser />} />
+                <Route path="new" element={<NewUserForm />} />
+              </Route>
             </Route>
           </Route>
         </Route>

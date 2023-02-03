@@ -3,11 +3,13 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "./authSlice";
 import { useLoginMutation } from "./authApiSlice";
+import usePersist from "../../hooks/usePersist";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
+  const [persist, setPersist] = usePersist();
 
   const userRef = useRef();
   const errRef = useRef();
@@ -99,6 +101,17 @@ const Login = () => {
           />
 
           <button className="form__submit-button">Sign In</button>
+
+          <label htmlFor="persist" className="form__persist">
+            Trust This Device
+          </label>
+          <input
+            type="checkbox"
+            className="form__checkbox"
+            id="persist"
+            onChange={() => setPersist((prev) => !prev)}
+            checked={persist}
+          />
         </form>
       </main>
 
