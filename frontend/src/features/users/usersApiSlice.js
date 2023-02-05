@@ -8,11 +8,13 @@ const initialState = usersAdapter.getInitialState();
 const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: () => "/users",
-      validateStatus: (response, result) => {
-        return response.status === 200 && !result.isError;
-      },
-      // keepUnusedDataFor: 5,
+      query: () => ({
+        url: "/users",
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
+
       transformResponse: (respData) => {
         const loadedUsers = respData.map((user) => {
           user.id = user._id;
