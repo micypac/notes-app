@@ -6,19 +6,14 @@ import notesApiSlice from "../notes/notesApiSlice";
 
 const PreFetch = () => {
   useEffect(() => {
-    console.log("subscribing...");
+    store.dispatch(
+      notesApiSlice.util.prefetch("getNotes", "notesList", { force: true })
+    );
 
-    const notes = store.dispatch(notesApiSlice.endpoints.getNotes.initiate()); // this is the manual subscription
-    const users = store.dispatch(usersApiSlice.endpoints.getUsers.initiate()); // this is the manual subscription
-
-    // cleanup.. unsubscribe once we leave the protected pages.
-    return () => {
-      console.log("unsubscribing...");
-
-      notes.unsubscribe();
-      users.unsubscribe();
-    };
-  });
+    store.dispatch(
+      usersApiSlice.util.prefetch("getUsers", "usersList", { force: true })
+    );
+  }, []);
 
   return <Outlet />;
 };
