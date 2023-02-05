@@ -1,9 +1,8 @@
-const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const Note = require("../models/Note");
 
-const getAllUsers = asyncHandler(async (req, res) => {
+const getAllUsers = async (req, res) => {
   // select() specifies which fields to include or exclude.
   // lean() return documents POJO; no save method, getters/setters, etc.
   const users = await User.find().select("-password").lean();
@@ -13,18 +12,21 @@ const getAllUsers = asyncHandler(async (req, res) => {
   }
 
   res.json(users);
-});
+};
 
-const createNewUser = asyncHandler(async (req, res) => {
+const createNewUser = async (req, res) => {
   const { username, password, roles } = req.body;
 
-  // confirm fields from request body
-  if (!username || !password || !Array.isArray(roles) || !roles.length) {
+  // confirm fields from request body. Roles has default "Employee" in the model.
+  if (!username || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   // check if duplicate user exist
-  const dupUser = await User.findOne({ username: username }).lean().exec();
+  const dupUser = await User.findOne({ username: username })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   if (dupUser) {
     return res.status(409).json({ message: "Duplicate username" });
@@ -34,11 +36,18 @@ const createNewUser = asyncHandler(async (req, res) => {
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
-  const newUser = await User.create({
-    username,
-    password: passwordHash,
-    roles,
-  });
+  const userObject =
+    !Array.isArray(roles) || !roles.length
+      ? { username, password: passwordHash }
+      : { username, password: passwordHash, roles };
+
+  // const newUser = await User.create({
+  //   username,
+  //   password: passwordHash,
+  //   roles,
+  // });
+
+  const newUser = await User.create(userObject);
 
   if (newUser) {
     // res.status(201).json(newUser);
@@ -46,9 +55,9 @@ const createNewUser = asyncHandler(async (req, res) => {
   } else {
     res.status(400).json({ messsage: "Invalid user data received" });
   }
-});
+};
 
-const updateUser = asyncHandler(async (req, res) => {
+const updateUser = async (req, res) => {
   const { id, username, roles, active, password } = req.body;
 
   // confirm fields from request body
@@ -70,7 +79,10 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 
   // check if duplicate user exist
-  const dupUser = await User.findOne({ username: username }).lean().exec();
+  const dupUser = await User.findOne({ username: username })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   if (dupUser && dupUser._id.toString() !== id) {
     return res.status(409).json({ message: "Duplicate username" });
@@ -89,9 +101,9 @@ const updateUser = asyncHandler(async (req, res) => {
   const updatedUser = await foundUser.save();
 
   res.json({ message: `User ${updatedUser.username} updated` });
-});
+};
 
-const deleteUser = asyncHandler(async (req, res) => {
+const deleteUser = async (req, res) => {
   const { id } = req.body;
 
   // confirm id from request
@@ -118,7 +130,7 @@ const deleteUser = asyncHandler(async (req, res) => {
   res.json({
     message: `User ${deletedUser.username} with ID ${deletedUser._id} deleted`,
   });
-});
+};
 
 module.exports = {
   getAllUsers,

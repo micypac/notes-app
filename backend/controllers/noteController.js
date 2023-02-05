@@ -1,8 +1,7 @@
-const asyncHandler = require("express-async-handler");
 const Note = require("../models/Note");
 const User = require("../models/User");
 
-const getAllNotes = asyncHandler(async (req, res) => {
+const getAllNotes = async (req, res) => {
   const notes = await Note.find().populate("user", { username: 1 }).lean();
 
   if (!notes?.length) {
@@ -10,9 +9,9 @@ const getAllNotes = asyncHandler(async (req, res) => {
   }
 
   res.json(notes);
-});
+};
 
-const createNewNote = asyncHandler(async (req, res) => {
+const createNewNote = async (req, res) => {
   const { user, title, text } = req.body;
 
   // confirm fields from request body
@@ -21,7 +20,10 @@ const createNewNote = asyncHandler(async (req, res) => {
   }
 
   // check if duplicate note exist
-  const dupNote = await Note.findOne({ title }).lean().exec();
+  const dupNote = await Note.findOne({ title })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   if (dupNote) {
     return res.status(409).json({ message: "Duplicate note exist" });
@@ -41,9 +43,9 @@ const createNewNote = asyncHandler(async (req, res) => {
   } else {
     res.status(400).json({ message: "Invalid note data received" });
   }
-});
+};
 
-const updateNote = asyncHandler(async (req, res) => {
+const updateNote = async (req, res) => {
   const { id, user, title, text, completed } = req.body;
 
   if (!id || !user || !title || !text || typeof completed !== "boolean") {
@@ -58,7 +60,10 @@ const updateNote = asyncHandler(async (req, res) => {
   }
 
   // check for duplicate title
-  const dupNote = await Note.findOne({ title }).lean().exec();
+  const dupNote = await Note.findOne({ title })
+    .collation({ locale: "en", strength: 2 })
+    .lean()
+    .exec();
 
   if (dupNote && dupNote._id.toString() !== id) {
     return res.status(409).json({ message: "Dupicate note title" });
@@ -72,9 +77,9 @@ const updateNote = asyncHandler(async (req, res) => {
   const updatedNote = await foundNote.save();
 
   res.json({ message: `${updatedNote.title} updated` });
-});
+};
 
-const deleteNote = asyncHandler(async (req, res) => {
+const deleteNote = async (req, res) => {
   const { id } = req.body;
 
   if (!id) return res.status(400).json({ message: "Note ID required" });
@@ -91,7 +96,7 @@ const deleteNote = asyncHandler(async (req, res) => {
   res.json({
     message: `Note ${deletedNote.title} with ID ${deletedNote._id} deleted`,
   });
-});
+};
 
 module.exports = {
   getAllNotes,
