@@ -1,11 +1,15 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectUserById } from "./usersApiSlice";
+import { useGetUsersQuery } from "./usersApiSlice";
+import { memo } from "react";
 
 const UserRow = ({ userId }) => {
-  const user = useSelector((state) => selectUserById(state, userId));
+  const { user } = useGetUsersQuery("usersList", {
+    selectFromResult: ({ data }) => ({
+      user: data?.entities[userId],
+    }),
+  });
 
   const navigate = useNavigate();
 
@@ -32,4 +36,5 @@ const UserRow = ({ userId }) => {
   }
 };
 
-export default UserRow;
+const memoizedUserRow = memo(UserRow);
+export default memoizedUserRow;
