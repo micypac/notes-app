@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+require("dotenv").config();
+const mongoose = require("mongoose");
+
+const { port } = require("../config");
+const { logEvents } = require("../middleware/logger");
+
+const app = require("../server");
+
+mongoose.connection.once("open", () => {
+  console.log("Connected to MongoDB...");
+  app.listen(port, () => console.log(`Server running on port ${port}...`));
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error(err);
+
+  logEvents(
+    `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
+    "dbErrorLog.log"
+  );
+});

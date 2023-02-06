@@ -1,11 +1,9 @@
-require("dotenv").config();
 require("express-async-errors");
 const express = require("express");
 const app = express();
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const mongoose = require("mongoose");
 const rootRouter = require("./routes/root");
 const userRouter = require("./routes/user");
 const noteRouter = require("./routes/note");
@@ -27,8 +25,6 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-// these are the same. First one is just more explicit
-// app.use("/", express.static(path.join(__dirname, "public")));
 app.use(express.static("public"));
 
 // Routes
@@ -48,30 +44,9 @@ app.all("*", (req, res, next) => {
   } else {
     res.type("txt").send("404 Not Found");
   }
-
-  // throw error manually to test errorHandler
-  // const err = new Error("The requested resource couldn't be found.");
-  // err.title = "Resource Not Found";
-  // err.errors = ["The requested resource couldn't be found."];
-  // err.status = 404;
-  // next(err);
 });
 
 // custom middleware errorHandler
 app.use(errorHandler);
 
-const port = process.env.PORT || 3500;
-
-mongoose.connection.once("open", () => {
-  console.log("Connected to MongoDB...");
-  app.listen(port, () => console.log(`Server running on port ${port}...`));
-});
-
-mongoose.connection.on("error", (err) => {
-  console.error(err);
-
-  logEvents(
-    `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
-    "dbErrorLog.log"
-  );
-});
+module.exports = app;

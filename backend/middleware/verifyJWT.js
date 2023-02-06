@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { ACCESS_TOKEN } = require("../config").jwtConfig;
 
 const verifyJWT = (req, res, next) => {
   const authHeader = req.headers.authorization || req.header.Authorization;
@@ -9,7 +10,7 @@ const verifyJWT = (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+  jwt.verify(token, ACCESS_TOKEN, (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: "Forbidden" });
     }

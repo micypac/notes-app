@@ -4,8 +4,9 @@
   "description": "Tech Notes App using MERN Project.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "per-env",
+    "start:development": "nodemon ./bin/www",
+    "start:production": "node ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
     "mongoose-sequence": "^5.3.1",
+    "per-env": "^1.0.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

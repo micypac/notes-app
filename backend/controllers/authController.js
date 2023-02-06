@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { ACCESS_TOKEN, REFRESH_TOKEN } = require("../config").jwtConfig;
 
 const login = async (req, res) => {
   const { username, password } = req.body;
@@ -28,7 +29,7 @@ const login = async (req, res) => {
         roles: foundUser.roles,
       },
     },
-    process.env.ACCESS_TOKEN_SECRET,
+    ACCESS_TOKEN,
     { expiresIn: "15m" }
   );
 
@@ -36,8 +37,7 @@ const login = async (req, res) => {
     {
       username: foundUser.username,
     },
-
-    process.env.REFRESH_TOKEN_SECRET,
+    REFRESH_TOKEN,
     { expiresIn: "7d" }
   );
 
@@ -62,7 +62,7 @@ const refresh = (req, res) => {
 
   jwt.verify(
     refreshToken,
-    process.env.REFRESH_TOKEN_SECRET,
+    REFRESH_TOKEN,
     asyncHandler(async (err, decoded) => {
       if (err) {
         return res.status(403).json({ message: "Forbidden" });
@@ -83,7 +83,7 @@ const refresh = (req, res) => {
             roles: foundUser.roles,
           },
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        ACCESS_TOKEN,
         { expiresIn: "15m" }
       );
 
