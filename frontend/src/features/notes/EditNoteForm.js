@@ -8,8 +8,10 @@ import useAuth from "../../hooks/useAuth";
 const EditNoteForm = ({ note, users }) => {
   const navigate = useNavigate();
 
+  // custom hook to authenticate JWT credential
   const { isAdmin, isManager } = useAuth();
 
+  // RTK Query endpoint hooks
   const [updateNote, { isLoading, isSuccess, isError, error }] =
     useUpdateNoteMutation();
 
@@ -18,11 +20,13 @@ const EditNoteForm = ({ note, users }) => {
     { isSuccess: isDelSuccess, isError: isDelError, error: delError },
   ] = useDeleteNoteMutation();
 
+  // useStates
   const [title, setTitle] = useState(note.title);
   const [text, setText] = useState(note.text);
-  const [user, setUser] = useState(note.user);
+  const [user, setUser] = useState(note.user._id);
   const [completed, setCompleted] = useState(note.completed);
 
+  // useEffect
   useEffect(() => {
     if (isSuccess || isDelSuccess) {
       setTitle("");
@@ -32,8 +36,10 @@ const EditNoteForm = ({ note, users }) => {
     }
   }, [isSuccess, isDelSuccess, navigate]);
 
+  // flags
   const canSave = [title, text, user].every(Boolean) && !isLoading;
 
+  // event handlers
   const onSaveNoteClicked = async (e) => {
     if (canSave) {
       await updateNote({
@@ -52,11 +58,30 @@ const EditNoteForm = ({ note, users }) => {
     });
   };
 
+  // JSX HTML elements
   const optionItems = users.map((user) => (
     <option key={user.id} value={user.id}>
       {user.username}
     </option>
   ));
+
+  const created = new Date(note.createdAt).toLocaleString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  });
+
+  const updated = new Date(note.updatedAt).toLocaleString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  });
 
   let deleteButton = null;
   if (isAdmin || isManager) {
@@ -71,8 +96,10 @@ const EditNoteForm = ({ note, users }) => {
     );
   }
 
-  const errClass = isError || isDelError ? "errmsg" : "offscreen";
   const errContent = (error?.data?.message || delError?.data?.message) ?? "";
+
+  // class attribute values
+  const errClass = isError || isDelError ? "errmsg" : "offscreen";
   const validTitleClass = title.length === 0 ? "form__input--incomplete" : "";
   const validTextClass = text.length === 0 ? "form__input--incomplete" : "";
   const validUserClass = user.length === 0 ? "form__input--incomplete" : "";
@@ -118,41 +145,56 @@ const EditNoteForm = ({ note, users }) => {
 
         <textarea
           id="text"
-          className={`form__input ${validTextClass}`}
+          className={`form__input form__input--text ${validTextClass}`}
           name="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
 
-        <label className="form__label" htmlFor="user">
-          Assigned User:
-        </label>
+        <div className="form__row">
+          <div className="form__divider">
+            <label className="form__label" htmlFor="completed">
+              Task Completed:
+            </label>
 
-        <select
-          id="user"
-          className={`form__select ${validUserClass}`}
-          name="user"
-          value={user}
-          onChange={(e) => setUser(e.target.value)}
-        >
-          <option value="" disabled>
-            Select User...
-          </option>
-          {optionItems}
-        </select>
+            <input
+              type="checkbox"
+              className="form__checkbox"
+              id="completed"
+              name="completed"
+              checked={completed}
+              onChange={(e) => setCompleted((prev) => !prev)}
+            />
 
-        <label className="form__label" htmlFor="completed">
-          Task Completed:
-        </label>
+            <label className="form__label" htmlFor="user">
+              Assigned User:
+            </label>
 
-        <input
-          type="checkbox"
-          className="form__checkbox"
-          id="completed"
-          name="completed"
-          value={completed}
-          onChange={(e) => setCompleted((prev) => !prev)}
-        />
+            <select
+              id="user"
+              className={`form__select ${validUserClass}`}
+              name="user"
+              value={user}
+              onChange={(e) => setUser(e.target.value)}
+            >
+              <option value="" disabled>
+                Select User...
+              </option>
+              {optionItems}
+            </select>
+          </div>
+
+          <div className="form__divider">
+            <p className="form__created">
+              Created: <br />
+              {created}
+            </p>
+            <p className="form__updated">
+              Updated: <br />
+              {updated}
+            </p>
+          </div>
+        </div>
       </form>
     </>
   );

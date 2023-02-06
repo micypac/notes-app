@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { setCredentials } from "./authSlice";
 import { useLoginMutation } from "./authApiSlice";
 import usePersist from "../../hooks/usePersist";
+import { PulseLoader } from "react-spinners";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -60,7 +61,7 @@ const Login = () => {
   let content;
 
   if (isLoading) {
-    content = <p>Loading...</p>;
+    content = <PulseLoader color="#FFF" />;
   }
 
   content = (

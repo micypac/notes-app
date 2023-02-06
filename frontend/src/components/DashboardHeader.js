@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useSendLogoutMutation } from "../features/auth/authApiSlice";
 import useAuth from "../hooks/useAuth";
+import { PulseLoader } from "react-spinners";
 
 const DASH_REGEX = /^\/dash(\/)?$/;
 const NOTES_REGEX = /^\/dash\/notes(\/)?$/;
@@ -29,9 +30,6 @@ const DashboardHeader = () => {
       navigate("/");
     }
   }, [isSuccess, navigate]);
-
-  // if (isLoading) return <p>Logging Out...</p>;
-  // if (isError) return <p>Error: {error.data?.message}</p>;
 
   let dashClass = null;
 
@@ -108,7 +106,7 @@ const DashboardHeader = () => {
   let buttonsContent;
 
   if (isLoading) {
-    buttonsContent = <p>Logging Out...</p>;
+    buttonsContent = <PulseLoader color="#FFF" />;
   } else {
     buttonsContent = (
       <>

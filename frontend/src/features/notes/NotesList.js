@@ -1,6 +1,7 @@
 import { useGetNotesQuery } from "./notesApiSlice";
 import Noterow from "./NoteRow";
 import useAuth from "../../hooks/useAuth";
+import { PulseLoader } from "react-spinners";
 
 const NotesList = () => {
   const { isAdmin, isManager, username } = useAuth();
@@ -19,7 +20,7 @@ const NotesList = () => {
 
   let content;
 
-  if (isLoading) content = <p>Loading...</p>;
+  if (isLoading) content = <PulseLoader color="#FFF" />;
 
   if (isError) {
     content = <p className="errmsg">{error?.data?.message}</p>;
@@ -35,7 +36,7 @@ const NotesList = () => {
     } else {
       // restrict to only the notes assigned to user if role is "Employee"
       filteredIds = ids.filter(
-        (noteId) => entities[noteId].username === username
+        (noteId) => entities[noteId].user.username === username
       );
     }
 
